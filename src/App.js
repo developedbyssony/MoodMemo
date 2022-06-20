@@ -1,8 +1,10 @@
 import './App.css';
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 /*import { BrowserRouter, Routes } from "react-router-dom";*/
 import DiaryEditor from './DiaryEditor.jsx';
 import DiaryList from './DiaryList';
+
+// https://jsonplaceholder.typicode.com/comments
 
 /*
 const dummyList = [
@@ -35,6 +37,28 @@ function App() {
   const [data, setData] = useState([]);
 
   const dataId = useRef(0);
+
+  const getData = async() => {
+    const res = await fetch('https://jsonplaceholder.typicode.com/comments').then((res)=>res.json());
+    console.log(res);
+
+    const initData = res.slice(0,20).map((it) => {
+      return {
+        author : it.email,
+        content : it.body,
+        emotion : Math.floor(Math.random() * 5)+1,
+        created_date : new Date().getTime(),
+        id : dataId.current++
+      }
+    }) // 0 -19까지 자름
+
+    setData(initData);
+  }; // promise를 반환하는 비동기 함수
+
+
+  useEffect(()=> { // callback
+    getData();
+  }, []);
 
   const onCreate = (author,content,emotion) => { // 2) DiaryEditor에서 파라미터 전달받음
     const created_date = new Date().getTime();
